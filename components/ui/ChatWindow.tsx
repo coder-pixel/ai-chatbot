@@ -122,7 +122,14 @@ const ChatWindow = ({ toggleChat, scrollRef }: ChatWindowProps) => {
       <CardFooter>
         <form
           className="w-full flex justify-between items-center space-x-2"
-          onSubmit={isLoading ? stop : handleSubmit}
+          onSubmit={
+            isLoading
+              ? (e) => {
+                  if (e) e.preventDefault();
+                  stop();
+                }
+              : handleSubmit
+          }
         >
           <Input
             value={input}
