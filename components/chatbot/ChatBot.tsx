@@ -24,7 +24,7 @@ const ChatBot = () => {
       setShowChatIcon(true);
     } else {
       setShowChatIcon(false);
-      setIsChatOpen(false);
+      // setIsChatOpen(false);
     }
   };
 

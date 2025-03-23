@@ -5,7 +5,7 @@ import remarkGfm from "remark-gfm";
 
 import { Card, CardTitle, CardHeader, CardContent, CardFooter } from "./card";
 import { Button } from "./button";
-import { SendIcon, XIcon, StopCircleIcon } from "lucide-react";
+import { SendIcon, XIcon, StopCircleIcon, Loader2 } from "lucide-react";
 import { ScrollArea } from "./scroll-area";
 import { useChat } from "@ai-sdk/react";
 import { Input } from "./input";
@@ -100,6 +100,13 @@ const ChatWindow = ({ toggleChat, scrollRef }: ChatWindowProps) => {
           ) : (
             <div className="w-full h-[90%] mt-32 text-gray-500 items-center flex justify-center gap-3">
               <p>No messages yet</p>
+            </div>
+          )}
+
+          {isLoading && (
+            <div className="w-full mt-5 text-gray-500 items-center flex justify-start gap-3">
+              <p>Generating response...</p>
+              <Loader2 className="size-4 animate-spin" />
             </div>
           )}
 
