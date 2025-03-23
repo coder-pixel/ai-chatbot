@@ -27,7 +27,7 @@ const buildGoogleGenAIPrompt = (messages: Message[]): Message[] => [
 ];
 
 export async function POST(request: NextRequest) {
-  const messages = await request.json();
+  const { messages } = await request.json();
   console.log(messages);
 
   const stream = await streamText({

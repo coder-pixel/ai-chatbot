@@ -1,8 +1,5 @@
 "use client";
 
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-
 import { motion, AnimatePresence } from "framer-motion";
 
 import React, { useEffect, useRef, useState } from "react";
@@ -13,6 +10,7 @@ import ChatWindow from "../ui/ChatWindow";
 
 const ChatBot = () => {
   const chatIconRef = useRef<HTMLButtonElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [showChatIcon, setShowChatIcon] = useState(false);
@@ -74,7 +72,7 @@ const ChatBot = () => {
             transition={{ duration: 0.2 }}
             className="fixed bottom-20 right-4 z-50 w-[95%] md:w-[400px]"
           >
-            <ChatWindow toggleChat={_toggleChat} />
+            <ChatWindow toggleChat={_toggleChat} scrollRef={scrollRef} />
           </motion.div>
         )}
       </AnimatePresence>

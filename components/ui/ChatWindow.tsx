@@ -1,4 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
+
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+
 import { Card, CardTitle, CardHeader, CardContent, CardFooter } from "./card";
 import { Button } from "./button";
 import { SendIcon, XIcon, StopCircleIcon } from "lucide-react";
@@ -8,9 +12,10 @@ import { Input } from "./input";
 
 interface ChatWindowProps {
   toggleChat: () => void;
+  scrollRef: React.RefObject<HTMLDivElement>;
 }
 
-const ChatWindow = ({ toggleChat }: ChatWindowProps) => {
+const ChatWindow = ({ toggleChat, scrollRef }: ChatWindowProps) => {
   const {
     messages,
     input,
@@ -21,8 +26,14 @@ const ChatWindow = ({ toggleChat }: ChatWindowProps) => {
     reload,
     error,
   } = useChat({
-    api: "/api/gemini",
+    api: "/api/gemini", // can also use other LLM providers
   });
+
+  useEffect(() => {
+    if (scrollRef?.current) {
+      scrollRef?.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages, scrollRef]);
 
   return (
     <Card className="border-2">
@@ -41,13 +52,53 @@ const ChatWindow = ({ toggleChat }: ChatWindowProps) => {
       <CardContent>
         <ScrollArea className="h-[300px] pr-2">
           {messages?.length > 0 ? (
-            messages?.map((message) => (
-              <div key={message?.id}>
-                <p>{message?.content}</p>
+            messages?.map((message, index) => (
+              <div
+                key={message?.id || index}
+                className={`mb-4 ${
+                  message?.role === "user" ? "text-right" : "text-left"
+                }`}
+              >
+                <div
+                  className={`inline-block px-4 py-2 rounded-lg ${
+                    message?.role === "user"
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted"
+                  }`}
+                >
+                  <ReactMarkdown
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      code({ inline, children, ...props }) {
+                        return inline ? (
+                          <code className="bg-gray-200 px-1 rounded" {...props}>
+                            {children}
+                          </code>
+                        ) : (
+                          <pre className="bg-gray-200 p-2 rounded">
+                            <code {...props}>{children}</code>
+                          </pre>
+                        );
+                      },
+
+                      ul({ children }) {
+                        return <ul className="list-disc ml-4">{children}</ul>;
+                      },
+
+                      ol({ children }) {
+                        return (
+                          <ul className="list-decimal ml-4">{children}</ul>
+                        );
+                      },
+                    }}
+                  >
+                    {message?.content}
+                  </ReactMarkdown>
+                </div>
               </div>
             ))
           ) : (
-            <div className="w-full mt-32 text-gray-500 items-center flex justify-center gap-3">
+            <div className="w-full h-[90%] mt-32 text-gray-500 items-center flex justify-center gap-3">
               <p>No messages yet</p>
             </div>
           )}
@@ -64,6 +115,8 @@ const ChatWindow = ({ toggleChat }: ChatWindowProps) => {
               </Button>
             </div>
           )}
+
+          <div ref={scrollRef} />
         </ScrollArea>
       </CardContent>
       <CardFooter>
